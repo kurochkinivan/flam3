@@ -1,0 +1,9 @@
+# Binary
+bin/
+
+# IO
+output/
+input/
+
+# tests
+coverage.*
