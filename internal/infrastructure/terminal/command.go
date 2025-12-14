@@ -25,34 +25,37 @@ func (h *Handler) app() *cli.Command {
 			&cli.IntFlag{
 				Name:    "width",
 				Aliases: []string{"w"},
-				Usage:   fmt.Sprintf("Output image width (int), default: %d", input_config.DefaultWidth),
+				Usage:   "Output image width (int)",
+				Value:   input_config.DefaultWidth,
 			},
 			&cli.IntFlag{
 				Name:    "height",
 				Aliases: []string{"h"},
-				Usage:   fmt.Sprintf("Output image height (int), default: %d", input_config.DefaultHeight),
+				Usage:   "Output image height (int)",
+				Value:   input_config.DefaultHeight,
 			},
 			&cli.Float64Flag{
 				Name:  "seed",
-				Usage: fmt.Sprintf("Random generator seed (float64), default: %.2f", input_config.DefaultSeed),
+				Usage: "Random generator seed (float64)",
+				Value: input_config.DefaultSeed,
 			},
 			&cli.IntFlag{
 				Name:    "iteration-count",
 				Aliases: []string{"i"},
-				Usage: fmt.Sprintf(
-					"Number of generation iterations (int), default: %d",
-					input_config.DefaultIterations,
-				),
+				Usage:   "Number of generation iterations (int)",
+				Value:   input_config.DefaultIterations,
 			},
 			&cli.StringFlag{
 				Name:    "output-path",
 				Aliases: []string{"o"},
-				Usage:   fmt.Sprintf("Relative path to output PNG file, default: %s", input_config.DefaultOutputPath),
+				Usage:   "Relative path to output PNG file",
+				Value:   input_config.DefaultOutputPath,
 			},
 			&cli.IntFlag{
 				Name:    "threads",
 				Aliases: []string{"t"},
-				Usage:   fmt.Sprintf("Number of worker threads (int), default: %d", input_config.DefaultThreads),
+				Usage:   "Number of worker threads (int)",
+				Value:   input_config.DefaultThreads,
 			},
 			&cli.StringFlag{
 				Name:      "affine-params",
@@ -75,24 +78,21 @@ func (h *Handler) app() *cli.Command {
 			&cli.BoolFlag{
 				Name:    "gamma-correction",
 				Aliases: []string{"g"},
-				Usage: fmt.Sprintf(
-					"Enable gamma correction (bool), default: %t",
-					input_config.DefaultGammaCorrection,
-				),
+				Usage:   "Enable gamma correction (bool)",
+				Value:   input_config.DefaultGammaCorrection,
 			},
 
 			&cli.Float64Flag{
 				Name:  "gamma",
-				Usage: fmt.Sprintf("Gamma value for correction (float64), default: %.2f", input_config.DefaultGamma),
+				Usage: "Gamma value for correction (float64)",
+				Value: input_config.DefaultGamma,
 			},
 
 			&cli.IntFlag{
 				Name:    "symmetry-level",
 				Aliases: []string{"s"},
-				Usage: fmt.Sprintf(
-					"Number of rotational symmetries N >= 1, default: %d",
-					input_config.DefaultSymmetryLevel,
-				),
+				Usage:   "Number of rotational symmetries N >= 1",
+				Value:   input_config.DefaultSymmetryLevel,
 			},
 			&cli.StringFlag{
 				Name:  "config",
