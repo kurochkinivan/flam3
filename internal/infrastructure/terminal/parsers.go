@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -8,9 +9,13 @@ import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/input_config"
 )
 
+const (
+	numberOfAffineParams = 6
+)
+
 func (h *Handler) parseFunctionsSlice(input string) ([]input_config.WeightedFunction, error) {
 	if strings.TrimSpace(input) == "" {
-		return nil, fmt.Errorf("functions were not provided")
+		return nil, errors.New("functions were not provided")
 	}
 
 	blocks := strings.Split(input, ",")
@@ -30,12 +35,12 @@ func (h *Handler) parseFunctionsSlice(input string) ([]input_config.WeightedFunc
 func parseFunction(block string) (input_config.WeightedFunction, error) {
 	parts := strings.Split(block, ":")
 	if len(parts) != 2 {
-		return input_config.WeightedFunction{}, fmt.Errorf("expected format name:weight")
+		return input_config.WeightedFunction{}, errors.New("expected format name:weight")
 	}
 
 	name := strings.TrimSpace(parts[0])
 	if name == "" {
-		return input_config.WeightedFunction{}, fmt.Errorf("function name is empty")
+		return input_config.WeightedFunction{}, errors.New("function name is empty")
 	}
 
 	weight, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
@@ -48,7 +53,7 @@ func parseFunction(block string) (input_config.WeightedFunction, error) {
 
 func (h *Handler) parseAffineParamsSlice(input string) ([]input_config.AffineParams, error) {
 	if strings.TrimSpace(input) == "" {
-		return nil, fmt.Errorf("affine params were not provided")
+		return nil, errors.New("affine params were not provided")
 	}
 
 	blocks := strings.Split(input, "/")
@@ -69,11 +74,11 @@ func (h *Handler) parseAffineParamsSlice(input string) ([]input_config.AffinePar
 }
 
 func parseAffineParams(parts []string) (input_config.AffineParams, error) {
-	if len(parts) != 6 {
+	if len(parts) != numberOfAffineParams {
 		return input_config.AffineParams{}, fmt.Errorf("expected 6 values, got %d", len(parts))
 	}
 
-	vals := make([]float64, 6)
+	vals := make([]float64, numberOfAffineParams)
 	for i, s := range parts {
 		v, err := strconv.ParseFloat(strings.TrimSpace(s), 64)
 		if err != nil {

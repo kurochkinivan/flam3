@@ -1,6 +1,7 @@
 package input_config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -76,11 +77,11 @@ func ValidatePath(path string) error {
 
 func validateWeightedFunctions(funcs []WeightedFunction) error {
 	if len(funcs) == 0 {
-		return fmt.Errorf("no functions specified")
+		return errors.New("no functions specified")
 	}
 
 	for i, wf := range funcs {
-		if !variation.VariationName(wf.Name).IsValid() {
+		if !variation.Name(wf.Name).IsValid() {
 			return fmt.Errorf("function #%d: unknown variation %q", i, wf.Name)
 		}
 
@@ -94,7 +95,7 @@ func validateWeightedFunctions(funcs []WeightedFunction) error {
 
 func validateAffineParams(params []AffineParams) error {
 	if len(params) == 0 {
-		return fmt.Errorf("no affine parameters specified")
+		return errors.New("no affine parameters specified")
 	}
 
 	return nil

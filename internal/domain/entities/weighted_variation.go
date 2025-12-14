@@ -8,6 +8,7 @@ import (
 
 type WeightedVariation struct {
 	variation.NamedFunction
+	
 	Weight float64
 }
 

@@ -3,7 +3,8 @@ package variation
 import "math"
 
 func linear(x, y float64) (newX, newY float64) {
-	return x, y
+	newX, newY = x, y
+	return newX, newY
 }
 
 func sinusoidal(x, y float64) (newX, newY float64) {
@@ -15,7 +16,7 @@ func sinusoidal(x, y float64) (newX, newY float64) {
 
 func spherical(x, y float64) (newX, newY float64) {
 	r := math.Sqrt(x*x + y*y)
-	r2 := math.Pow(r, 2)
+	r2 := r * r
 
 	newX = x / r2
 	newY = y / r2
@@ -25,7 +26,7 @@ func spherical(x, y float64) (newX, newY float64) {
 
 func swirl(x, y float64) (newX, newY float64) {
 	r := math.Sqrt(x*x + y*y)
-	r2 := math.Pow(r, 2)
+	r2 := r * r
 	sinR2 := math.Sin(r2)
 	cosR2 := math.Cos(r2)
 
@@ -49,7 +50,7 @@ func polar(x, y float64) (newX, newY float64) {
 	r := math.Sqrt(x*x + y*y)
 	newX = theta / math.Pi
 	newY = r - 1.0
-	return
+	return newX, newY
 }
 
 func handkerchief(x, y float64) (newX, newY float64) {
@@ -57,7 +58,7 @@ func handkerchief(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x)
 	newX = r * math.Sin(theta+r)
 	newY = r * math.Cos(theta-r)
-	return
+	return newX, newY
 }
 
 func heart(x, y float64) (newX, newY float64) {
@@ -65,7 +66,7 @@ func heart(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x)
 	newX = r * math.Sin(theta*r)
 	newY = -r * math.Cos(theta*r)
-	return
+	return newX, newY
 }
 
 func disk(x, y float64) (newX, newY float64) {
@@ -73,7 +74,7 @@ func disk(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x) / math.Pi
 	newX = theta * math.Sin(r)
 	newY = theta * math.Cos(r)
-	return
+	return newX, newY
 }
 
 func spiral(x, y float64) (newX, newY float64) {
@@ -81,7 +82,7 @@ func spiral(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x)
 	newX = (1.0 / r) * (math.Cos(theta) + math.Sin(r))
 	newY = (1.0 / r) * (math.Sin(theta) - math.Cos(r))
-	return
+	return newX, newY
 }
 
 func hyperbolic(x, y float64) (newX, newY float64) {
@@ -89,7 +90,7 @@ func hyperbolic(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x)
 	newX = math.Sin(theta) / r
 	newY = r * math.Cos(theta)
-	return
+	return newX, newY
 }
 
 func diamond(x, y float64) (newX, newY float64) {
@@ -97,7 +98,7 @@ func diamond(x, y float64) (newX, newY float64) {
 	theta := math.Atan2(y, x)
 	newX = math.Sin(theta) * math.Cos(r)
 	newY = math.Cos(theta) * math.Sin(r)
-	return
+	return newX, newY
 }
 
 func ex(x, y float64) (newX, newY float64) {
@@ -109,7 +110,7 @@ func ex(x, y float64) (newX, newY float64) {
 
 	newX = r * (p0 + p1)
 	newY = r * (p0 - p1)
-	return
+	return newX, newY
 }
 
 func bent(x, y float64) (newX, newY float64) {
@@ -122,53 +123,53 @@ func bent(x, y float64) (newX, newY float64) {
 	} else {
 		newX, newY = 2*x, 0.5*y
 	}
-	return
+	return newX, newY
 }
 
 func fisheye(x, y float64) (newX, newY float64) {
 	r := 2.0 / (1.0 + math.Sqrt(x*x+y*y))
 	newX = r * y
 	newY = r * x
-	return
+	return newX, newY
 }
 
 func eyefish(x, y float64) (newX, newY float64) {
 	r := 2.0 / (1.0 + math.Sqrt(x*x+y*y))
 	newX = r * x
 	newY = r * y
-	return
+	return newX, newY
 }
 
 func bubble(x, y float64) (newX, newY float64) {
 	r := 4 + x*x + y*y
 	newX = (4 * x) / r
 	newY = (4 * y) / r
-	return
+	return newX, newY
 }
 
 func cylinder(x, y float64) (newX, newY float64) {
 	newX = math.Sin(x)
 	newY = y
-	return
+	return newX, newY
 }
 
 func tangent(x, y float64) (newX, newY float64) {
 	newX = math.Sin(x) / math.Cos(y)
 	newY = math.Tan(y)
-	return
+	return newX, newY
 }
 
 func cross(x, y float64) (newX, newY float64) {
 	r := math.Sqrt(1.0 / ((x*x - y*y) * (x*x - y*y)))
 	newX = x * r
 	newY = y * r
-	return
+	return newX, newY
 }
 
 func exponential(x, y float64) (newX, newY float64) {
 	newX = math.Exp(x-1.0) * math.Cos(math.Pi*y)
 	newY = math.Exp(x-1.0) * math.Sin(math.Pi*y)
-	return
+	return newX, newY
 }
 
 func power(x, y float64) (newX, newY float64) {
@@ -177,11 +178,11 @@ func power(x, y float64) (newX, newY float64) {
 	p := math.Pow(r, math.Sin(theta))
 	newX = p * math.Cos(theta)
 	newY = p * math.Sin(theta)
-	return
+	return newX, newY
 }
 
 func cosine(x, y float64) (newX, newY float64) {
 	newX = math.Cos(math.Pi*x) * math.Cosh(y)
 	newY = -math.Sin(math.Pi*x) * math.Sinh(y)
-	return
+	return newX, newY
 }

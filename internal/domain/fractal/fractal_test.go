@@ -20,7 +20,7 @@ func TestGenerate_HappyPath(t *testing.T) {
 	mathBounds := entities.DefaultMathBounds()
 	viewPort := entities.NewViewport(resolution, mathBounds)
 
-	f, err := variation.VariationProvider(variation.Cosine)
+	f, err := variation.Provider(variation.Cosine)
 	require.NoError(t, err)
 
 	variations := []entities.WeightedVariation{entities.NewWeightedVariation(f, 1.0)}
@@ -35,7 +35,7 @@ func TestGenerate_HappyPath(t *testing.T) {
 	assert.Equal(t, resolution.Height(), result.Height(), "высота изображения должна совпадать с resolution")
 
 	touchedPixels := countTouchedPixels(result)
-	assert.Greater(t, touchedPixels, 0, "должен быть хотя бы один затронутый пиксель")
+	assert.Positive(t, touchedPixels, "должен быть хотя бы один затронутый пиксель")
 }
 
 func countTouchedPixels(pixels *pixels.Pixels) int {

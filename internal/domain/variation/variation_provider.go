@@ -5,27 +5,27 @@ import (
 )
 
 type NamedFunction struct {
-	Name     VariationName
+	Name     Name
 	Function F
 }
 
-func NewNamedFunction(name VariationName, function F) NamedFunction {
+func NewNamedFunction(name Name, function F) NamedFunction {
 	return NamedFunction{
 		Name:     name,
 		Function: function,
 	}
 }
 
-type VariationName string
+type Name string
 
 type F func(x, y float64) (newX, newY float64)
 
-func (v VariationName) IsValid() bool {
+func (v Name) IsValid() bool {
 	_, ok := registry[v]
 	return ok
 }
 
-func VariationProvider(name VariationName) (NamedFunction, error) {
+func Provider(name Name) (NamedFunction, error) {
 	if fn, ok := registry[name]; ok {
 		return fn, nil
 	}

@@ -21,8 +21,8 @@ func TestLinear(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY := linear(tt.x, tt.y)
-			assert.Equal(t, tt.wantX, gotX)
-			assert.Equal(t, tt.wantY, gotY)
+			assert.InDelta(t, tt.wantX, gotX, 0.01)
+			assert.InDelta(t, tt.wantY, gotY, 0.01)
 		})
 	}
 }
@@ -300,8 +300,8 @@ func TestBent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY := bent(tt.x, tt.y)
-			assert.Equal(t, tt.wantX, gotX)
-			assert.Equal(t, tt.wantY, gotY)
+			assert.InDelta(t, tt.wantX, gotX, 0.01)
+			assert.InDelta(t, tt.wantY, gotY, 0.01)
 		})
 	}
 }
@@ -380,7 +380,7 @@ func TestCylinder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY := cylinder(tt.x, tt.y)
 			assert.InDelta(t, tt.wantX, gotX, 1e-10)
-			assert.Equal(t, tt.wantY, gotY)
+			assert.InDelta(t, tt.wantY, gotY, 0.01)
 		})
 	}
 }

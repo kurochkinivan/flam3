@@ -126,7 +126,7 @@ func TestRun_NoParams_JSON(t *testing.T) {
 	cli.OsExiter = func(code int) {
 		assert.Equal(t, terminal.ExitCodeInvalidInput, code)
 	}
-	
+
 	handler := terminal.New("version", useCase)
 	err = handler.Run(t.Context(), osArgs)
 	require.Error(t, err)

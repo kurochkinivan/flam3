@@ -7,7 +7,7 @@ const (
 	DefaultYMin = -1.0
 )
 
-// MathBounds представляет математические границы области просмотра
+// MathBounds represents mathematical bounds of the viewport.
 type MathBounds struct {
 	xMin, xMax float64
 	yMin, yMax float64

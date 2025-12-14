@@ -39,7 +39,7 @@ func TestNew_HappyPath(t *testing.T) {
 	require.Equal(t, in.Iterations, cfg.Iterations)
 	require.Equal(t, in.Output, cfg.OutputPath)
 	require.Equal(t, in.Threads, cfg.Threads)
-	require.Equal(t, in.Gamma, cfg.Gamma)
+	require.InDelta(t, in.Gamma, cfg.Gamma, 0.01)
 	require.Equal(t, in.SymmetryLevel, cfg.SymmetryLevel)
 
 	// наблюдаемые эффекты

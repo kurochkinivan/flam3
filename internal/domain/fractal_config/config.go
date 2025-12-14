@@ -58,7 +58,12 @@ func New(cfg *input_config.Config, samples int) (*Config, error) {
 	rand := rand.New(rand.NewPCG(seed, seed))
 
 	resolution := entities.NewResolution(cfg.Size.Width, cfg.Size.Height)
-	mathBounds := entities.NewMathBounds(entities.DefaultXMin, entities.DefaultXMax, entities.DefaultYMin, entities.DefaultYMax)
+	mathBounds := entities.NewMathBounds(
+		entities.DefaultXMin,
+		entities.DefaultXMax,
+		entities.DefaultYMin,
+		entities.DefaultYMax,
+	)
 
 	coeffs := mapCoefficients(rand, cfg.AffineParams)
 	variations, err := mapVariations(cfg.WeightedFunctions)

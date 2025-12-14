@@ -9,8 +9,9 @@ import (
 )
 
 type Pixels struct {
-	pixels [][]*entities.Pixel
 	entities.Resolution
+	
+	pixels [][]*entities.Pixel
 }
 
 func NewPixels(resolution entities.Resolution) *Pixels {
@@ -19,7 +20,7 @@ func NewPixels(resolution entities.Resolution) *Pixels {
 	for i := range pixels {
 		pixels[i] = make([]*entities.Pixel, resolution.Width())
 		for j := range pixels[i] {
-			pixels[i][j] = entities.NewPixel(color.RGBA{A: 255})
+			pixels[i][j] = entities.NewPixel(color.RGBA{A: math.MaxUint8})
 		}
 	}
 
@@ -50,7 +51,7 @@ func (p *Pixels) ApplyGammaFactor(gamma float64) {
 				R: uint8(float64(pix.Color.R) * math.Pow(alphaNormal, 1.0/gamma)),
 				G: uint8(float64(pix.Color.G) * math.Pow(alphaNormal, 1.0/gamma)),
 				B: uint8(float64(pix.Color.B) * math.Pow(alphaNormal, 1.0/gamma)),
-				A: 255,
+				A: math.MaxUint8,
 			}
 		}
 	}
@@ -80,7 +81,7 @@ func (p *Pixels) Merge(p2 *Pixels) {
 				R: uint8((float64(dst.Color.R)*oldWeight + float64(src.Color.R)*newWeight) / totalWeight),
 				G: uint8((float64(dst.Color.G)*oldWeight + float64(src.Color.G)*newWeight) / totalWeight),
 				B: uint8((float64(dst.Color.B)*oldWeight + float64(src.Color.B)*newWeight) / totalWeight),
-				A: 255,
+				A: math.MaxUint8,
 			}
 
 			dst.Count += src.Count
@@ -88,7 +89,7 @@ func (p *Pixels) Merge(p2 *Pixels) {
 	}
 }
 
-func (p Pixels) Image() image.Image {
+func (p *Pixels) Image() image.Image {
 	rect := image.Rect(0, 0, p.Width(), p.Height())
 	img := image.NewRGBA(rect)
 

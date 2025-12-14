@@ -36,7 +36,7 @@ func New(log *slog.Logger, generator Generator, imageSaver ImageSaver) *FractalU
 func (f *FractalUsecase) Execute(ctx context.Context, cfg *fractal_config.Config) error {
 	// 1. Generate fractal
 	start := time.Now()
-	f.log.Info("generating fractal",
+	f.log.InfoContext(ctx, "generating fractal",
 		slog.Int("samples", cfg.Samples),
 		slog.Int("iterations", cfg.Iterations),
 		slog.Int("threads", cfg.Threads),
@@ -47,28 +47,28 @@ func (f *FractalUsecase) Execute(ctx context.Context, cfg *fractal_config.Config
 
 	pixels := f.generator.GenerateFractal(cfg)
 
-	f.log.Info("completed fractal generation", slog.Duration("duration", time.Since(start)))
+	f.log.InfoContext(ctx, "completed fractal generation", slog.Duration("duration", time.Since(start)))
 
 	// 2. Apply gamma factor if necessary
 	if cfg.GammaCorrection {
-		start := time.Now()
-		f.log.Info("applying gamma factor", slog.Float64("gamma", cfg.Gamma))
+		start = time.Now()
+		f.log.InfoContext(ctx, "applying gamma factor", slog.Float64("gamma", cfg.Gamma))
 
 		pixels.ApplyGammaFactor(cfg.Gamma)
 
-		f.log.Info("gamma factor was applied", slog.Duration("duration", time.Since(start)))
+		f.log.InfoContext(ctx, "gamma factor was applied", slog.Duration("duration", time.Since(start)))
 	} else {
-		f.log.Info("gamma correction not enabled", slog.Bool("enabled", cfg.GammaCorrection))
+		f.log.InfoContext(ctx, "gamma correction not enabled", slog.Bool("enabled", cfg.GammaCorrection))
 	}
 
 	// 3. Convert pixels to image and save it
-	f.log.Info("saving image", slog.String("output_path", cfg.OutputPath))
+	f.log.InfoContext(ctx, "saving image", slog.String("output_path", cfg.OutputPath))
 
 	if err := f.imageSaver.SaveImage(pixels.Image(), cfg.OutputPath); err != nil {
 		return fmt.Errorf("failed to save image: %w", err)
 	}
 
-	f.log.Info("image was successfully saved")
+	f.log.InfoContext(ctx, "image was successfully saved")
 
 	return nil
 }

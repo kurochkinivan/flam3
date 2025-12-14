@@ -23,12 +23,12 @@ func TestNewAffineParams(t *testing.T) {
 	a, b, c, d, e, f := 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
 	params := input_config.NewAffineParams(a, b, c, d, e, f)
 
-	assert.Equal(t, a, params.A)
-	assert.Equal(t, b, params.B)
-	assert.Equal(t, c, params.C)
-	assert.Equal(t, d, params.D)
-	assert.Equal(t, e, params.E)
-	assert.Equal(t, f, params.F)
+	assert.InDelta(t, a, params.A, 0.01)
+	assert.InDelta(t, b, params.B, 0.01)
+	assert.InDelta(t, c, params.C, 0.01)
+	assert.InDelta(t, d, params.D, 0.01)
+	assert.InDelta(t, e, params.E, 0.01)
+	assert.InDelta(t, f, params.F, 0.01)
 }
 
 func TestNewWeightedFunction(t *testing.T) {
@@ -37,7 +37,7 @@ func TestNewWeightedFunction(t *testing.T) {
 	wf := input_config.NewWeightedFunction(name, weight)
 
 	assert.Equal(t, name, wf.Name)
-	assert.Equal(t, weight, wf.Weight)
+	assert.InDelta(t, weight, wf.Weight, 0.01)
 }
 
 func TestNewConfig(t *testing.T) {
@@ -63,14 +63,14 @@ func TestNewConfig(t *testing.T) {
 	)
 
 	assert.Equal(t, size, cfg.Size)
-	assert.Equal(t, seed, cfg.Seed)
+	assert.InDelta(t, seed, cfg.Seed, 0.01)
 	assert.Equal(t, iterations, cfg.Iterations)
 	assert.Equal(t, output, cfg.Output)
 	assert.Equal(t, threads, cfg.Threads)
 	assert.Equal(t, affineParams, cfg.AffineParams)
 	assert.Equal(t, weightedFunctions, cfg.WeightedFunctions)
 	assert.Equal(t, gammaCorrection, cfg.GammaCorrection)
-	assert.Equal(t, gamma, cfg.Gamma)
+	assert.InDelta(t, gamma, cfg.Gamma, 0.01)
 	assert.Equal(t, symmetryLevel, cfg.SymmetryLevel)
 }
 

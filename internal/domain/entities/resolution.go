@@ -1,6 +1,6 @@
 package entities
 
-// Resolution представляет разрешение экрана в пикселях
+// Resolution represents image resolution.
 type Resolution struct {
 	width  int
 	height int

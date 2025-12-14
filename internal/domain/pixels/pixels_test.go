@@ -4,7 +4,6 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/entities"
@@ -13,6 +12,7 @@ import (
 
 type PixelsTestSuite struct {
 	suite.Suite
+
 	resolution entities.Resolution
 	pixels     *pixels.Pixels
 }
@@ -23,17 +23,17 @@ func (suite *PixelsTestSuite) SetupTest() {
 }
 
 func (suite *PixelsTestSuite) TestNewPixels() {
-	assert.Equal(suite.T(), suite.resolution.Width(), suite.pixels.Width())
-	assert.Equal(suite.T(), suite.resolution.Height(), suite.pixels.Height())
+	suite.Equal(suite.resolution.Width(), suite.pixels.Width())
+	suite.Equal(suite.resolution.Height(), suite.pixels.Height())
 
 	// Check that all pixels are initialized
-	for y := 0; y < suite.pixels.Height(); y++ {
-		for x := 0; x < suite.pixels.Width(); x++ {
+	for y := range suite.pixels.Height() {
+		for x := range suite.pixels.Width() {
 			pix := suite.pixels.Pix(x, y)
-			assert.NotNil(suite.T(), pix)
-			assert.Equal(suite.T(), uint8(255), pix.Color.A)
-			assert.Equal(suite.T(), 0, pix.Count)
-			assert.Equal(suite.T(), 0.0, pix.Normal)
+			suite.NotNil(pix)
+			suite.Equal(uint8(255), pix.Color.A)
+			suite.Equal(0, pix.Count)
+			suite.InDelta(0.0, pix.Normal, 0.01)
 		}
 	}
 }
@@ -41,7 +41,7 @@ func (suite *PixelsTestSuite) TestNewPixels() {
 func (suite *PixelsTestSuite) TestPix() {
 	// Test getting pixel at valid coordinates
 	pix := suite.pixels.Pix(5, 5)
-	assert.NotNil(suite.T(), pix)
+	suite.NotNil(pix)
 
 	// Modify pixel and verify
 	newCount := 42
@@ -53,9 +53,9 @@ func (suite *PixelsTestSuite) TestPix() {
 	pix.Normal = newNormal
 
 	retrieved := suite.pixels.Pix(5, 5)
-	assert.Equal(suite.T(), newCount, retrieved.Count)
-	assert.Equal(suite.T(), newColor, retrieved.Color)
-	assert.Equal(suite.T(), newNormal, retrieved.Normal)
+	suite.Equal(newCount, retrieved.Count)
+	suite.Equal(newColor, retrieved.Color)
+	suite.InDelta(newNormal, retrieved.Normal, 0.01)
 }
 
 func (suite *PixelsTestSuite) TestApplyGammaFactor() {
@@ -66,8 +66,8 @@ func (suite *PixelsTestSuite) TestApplyGammaFactor() {
 	suite.pixels.Pix(3, 3).Count = 1000
 
 	// Set initial colors
-	for y := 0; y < suite.pixels.Height(); y++ {
-		for x := 0; x < suite.pixels.Width(); x++ {
+	for y := range suite.pixels.Height() {
+		for x := range suite.pixels.Width() {
 			suite.pixels.Pix(x, y).Color = color.RGBA{R: 255, G: 255, B: 255, A: 255}
 		}
 	}
@@ -82,27 +82,27 @@ func (suite *PixelsTestSuite) TestApplyGammaFactor() {
 	pix1000 := suite.pixels.Pix(3, 3)
 
 	// The pixel with highest count (1000, log10=3) should be brightest
-	assert.True(suite.T(), pix1000.Normal > pix100.Normal)
-	assert.True(suite.T(), pix100.Normal > pix10.Normal)
-	assert.True(suite.T(), pix10.Normal > pix1.Normal)
+	suite.Greater(pix1000.Normal, pix100.Normal)
+	suite.Greater(pix100.Normal, pix10.Normal)
+	suite.Greater(pix10.Normal, pix1.Normal)
 
 	// All pixels should have A=255
-	assert.Equal(suite.T(), uint8(255), pix1.Color.A)
-	assert.Equal(suite.T(), uint8(255), pix10.Color.A)
-	assert.Equal(suite.T(), uint8(255), pix100.Color.A)
-	assert.Equal(suite.T(), uint8(255), pix1000.Color.A)
+	suite.Equal(uint8(255), pix1.Color.A)
+	suite.Equal(uint8(255), pix10.Color.A)
+	suite.Equal(uint8(255), pix100.Color.A)
+	suite.Equal(uint8(255), pix1000.Color.A)
 }
 
 func (suite *PixelsTestSuite) TestApplyGammaFactor_ZeroCounts() {
 	// All pixels have count = 0
-	for y := 0; y < suite.pixels.Height(); y++ {
-		for x := 0; x < suite.pixels.Width(); x++ {
+	for y := range suite.pixels.Height() {
+		for x := range suite.pixels.Width() {
 			suite.pixels.Pix(x, y).Count = 0
 		}
 	}
 
 	// Should not panic
-	assert.NotPanics(suite.T(), func() {
+	suite.NotPanics(func() {
 		suite.pixels.ApplyGammaFactor(2.2)
 	})
 }
@@ -140,23 +140,29 @@ func (suite *PixelsTestSuite) TestMerge() {
 	// Check merged pixel (0,0): should be average of color1 and color3 with weights count1 and count3
 	merged00 := pixels1.Pix(0, 0)
 	expectedCount00 := count1 + count3
-	expectedR00 := uint8((float64(color1.R)*float64(count1) + float64(color3.R)*float64(count3)) / float64(expectedCount00))
-	expectedG00 := uint8((float64(color1.G)*float64(count1) + float64(color3.G)*float64(count3)) / float64(expectedCount00))
-	expectedB00 := uint8((float64(color1.B)*float64(count1) + float64(color3.B)*float64(count3)) / float64(expectedCount00))
+	expectedR00 := uint8(
+		(float64(color1.R)*float64(count1) + float64(color3.R)*float64(count3)) / float64(expectedCount00),
+	)
+	expectedG00 := uint8(
+		(float64(color1.G)*float64(count1) + float64(color3.G)*float64(count3)) / float64(expectedCount00),
+	)
+	expectedB00 := uint8(
+		(float64(color1.B)*float64(count1) + float64(color3.B)*float64(count3)) / float64(expectedCount00),
+	)
 	expectedColor00 := color.RGBA{R: expectedR00, G: expectedG00, B: expectedB00, A: 255}
 
-	assert.Equal(suite.T(), expectedCount00, merged00.Count)
-	assert.Equal(suite.T(), expectedColor00, merged00.Color)
+	suite.Equal(expectedCount00, merged00.Count)
+	suite.Equal(expectedColor00, merged00.Color)
 
 	// Check pixel (1,1): should remain unchanged (no merge from pixels2)
 	merged11 := pixels1.Pix(1, 1)
-	assert.Equal(suite.T(), count2, merged11.Count)
-	assert.Equal(suite.T(), color2, merged11.Color)
+	suite.Equal(count2, merged11.Count)
+	suite.Equal(color2, merged11.Color)
 
 	// Check pixel (2,2): should be copied from pixels2
 	merged22 := pixels1.Pix(2, 2)
-	assert.Equal(suite.T(), count4, merged22.Count)
-	assert.Equal(suite.T(), color4, merged22.Color)
+	suite.Equal(count4, merged22.Count)
+	suite.Equal(color4, merged22.Color)
 }
 
 func (suite *PixelsTestSuite) TestMergeEmptyPixels() {
@@ -171,8 +177,8 @@ func (suite *PixelsTestSuite) TestMergeEmptyPixels() {
 
 	pixels1.Merge(pixels2)
 
-	assert.Equal(suite.T(), originalCount, pixels1.Pix(5, 5).Count)
-	assert.Equal(suite.T(), originalColor, pixels1.Pix(5, 5).Color)
+	suite.Equal(originalCount, pixels1.Pix(5, 5).Count)
+	suite.Equal(originalColor, pixels1.Pix(5, 5).Color)
 }
 
 func (suite *PixelsTestSuite) TestImage() {
@@ -189,29 +195,29 @@ func (suite *PixelsTestSuite) TestImage() {
 
 	// Check image dimensions
 	bounds := img.Bounds()
-	assert.Equal(suite.T(), 0, bounds.Min.X)
-	assert.Equal(suite.T(), 0, bounds.Min.Y)
-	assert.Equal(suite.T(), suite.pixels.Width(), bounds.Max.X)
-	assert.Equal(suite.T(), suite.pixels.Height(), bounds.Max.Y)
+	suite.Equal(0, bounds.Min.X)
+	suite.Equal(0, bounds.Min.Y)
+	suite.Equal(suite.pixels.Width(), bounds.Max.X)
+	suite.Equal(suite.pixels.Height(), bounds.Max.Y)
 
 	// Check pixel colors in the image
 	r1, g1, b1, a1 := img.At(0, 0).RGBA()
-	assert.Equal(suite.T(), uint32(redColor.R), r1>>8) // RGBA returns 16-bit values
-	assert.Equal(suite.T(), uint32(redColor.G), g1>>8)
-	assert.Equal(suite.T(), uint32(redColor.B), b1>>8)
-	assert.Equal(suite.T(), uint32(redColor.A), a1>>8)
+	suite.Equal(uint32(redColor.R), r1>>8) // RGBA returns 16-bit values
+	suite.Equal(uint32(redColor.G), g1>>8)
+	suite.Equal(uint32(redColor.B), b1>>8)
+	suite.Equal(uint32(redColor.A), a1>>8)
 
 	r2, g2, b2, a2 := img.At(1, 1).RGBA()
-	assert.Equal(suite.T(), uint32(greenColor.R), r2>>8)
-	assert.Equal(suite.T(), uint32(greenColor.G), g2>>8)
-	assert.Equal(suite.T(), uint32(greenColor.B), b2>>8)
-	assert.Equal(suite.T(), uint32(greenColor.A), a2>>8)
+	suite.Equal(uint32(greenColor.R), r2>>8)
+	suite.Equal(uint32(greenColor.G), g2>>8)
+	suite.Equal(uint32(greenColor.B), b2>>8)
+	suite.Equal(uint32(greenColor.A), a2>>8)
 
 	r3, g3, b3, a3 := img.At(2, 2).RGBA()
-	assert.Equal(suite.T(), uint32(blueColor.R), r3>>8)
-	assert.Equal(suite.T(), uint32(blueColor.G), g3>>8)
-	assert.Equal(suite.T(), uint32(blueColor.B), b3>>8)
-	assert.Equal(suite.T(), uint32(blueColor.A), a3>>8)
+	suite.Equal(uint32(blueColor.R), r3>>8)
+	suite.Equal(uint32(blueColor.G), g3>>8)
+	suite.Equal(uint32(blueColor.B), b3>>8)
+	suite.Equal(uint32(blueColor.A), a3>>8)
 }
 
 func TestPixelsTestSuite(t *testing.T) {

@@ -1,32 +1,32 @@
 package variation
 
 const (
-	Linear       VariationName = "linear"
-	Sinusoidal   VariationName = "sinusoidal"
-	Spherical    VariationName = "spherical"
-	Swirl        VariationName = "swirl"
-	Horseshoe    VariationName = "horseshoe"
-	Polar        VariationName = "polar"
-	Handkerchief VariationName = "handkerchief"
-	Heart        VariationName = "heart"
-	Disk         VariationName = "disk"
-	Spiral       VariationName = "spiral"
-	Hyperbolic   VariationName = "hyperbolic"
-	Diamond      VariationName = "diamond"
-	Ex           VariationName = "ex"
-	Bent         VariationName = "bent"
-	Fisheye      VariationName = "fisheye"
-	Eyefish      VariationName = "eyefish"
-	Bubble       VariationName = "bubble"
-	Cylinder     VariationName = "cylinder"
-	Tangent      VariationName = "tangent"
-	Cross        VariationName = "cross"
-	Exponential  VariationName = "exponential"
-	Power        VariationName = "power"
-	Cosine       VariationName = "cosine"
+	Linear       Name = "linear"
+	Sinusoidal   Name = "sinusoidal"
+	Spherical    Name = "spherical"
+	Swirl        Name = "swirl"
+	Horseshoe    Name = "horseshoe"
+	Polar        Name = "polar"
+	Handkerchief Name = "handkerchief"
+	Heart        Name = "heart"
+	Disk         Name = "disk"
+	Spiral       Name = "spiral"
+	Hyperbolic   Name = "hyperbolic"
+	Diamond      Name = "diamond"
+	Ex           Name = "ex"
+	Bent         Name = "bent"
+	Fisheye      Name = "fisheye"
+	Eyefish      Name = "eyefish"
+	Bubble       Name = "bubble"
+	Cylinder     Name = "cylinder"
+	Tangent      Name = "tangent"
+	Cross        Name = "cross"
+	Exponential  Name = "exponential"
+	Power        Name = "power"
+	Cosine       Name = "cosine"
 )
 
-var registry = map[VariationName]NamedFunction{
+var registry = map[Name]NamedFunction{
 	Linear:       NewNamedFunction(Linear, linear),
 	Sinusoidal:   NewNamedFunction(Sinusoidal, sinusoidal),
 	Spherical:    NewNamedFunction(Spherical, spherical),

@@ -13,9 +13,9 @@ func TestVariationProvider_HappyPath(t *testing.T) {
 	for name := range registry {
 		assert.True(t, name.IsValid())
 
-		variation, err := VariationProvider(name)
-		
-		assert.NoError(t, err)
+		variation, err := Provider(name)
+
+		require.NoError(t, err)
 		assert.NotNil(t, variation)
 	}
 }
@@ -23,8 +23,8 @@ func TestVariationProvider_HappyPath(t *testing.T) {
 func TestVariationProvider_UnknownVariation(t *testing.T) {
 	t.Parallel()
 
-	name := VariationName("unknown")
-	variation, err := VariationProvider(name)
+	name := Name("unknown")
+	variation, err := Provider(name)
 
 	require.Equal(t, NamedFunction{}, variation)
 	require.Error(t, err)

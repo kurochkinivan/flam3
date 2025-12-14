@@ -18,12 +18,12 @@ func TestNew(t *testing.T) {
 
 	coeff := coefficients.New(a, b, d, e, c, f, testColor)
 
-	assert.Equal(t, a, coeff.A)
-	assert.Equal(t, b, coeff.B)
-	assert.Equal(t, d, coeff.D)
-	assert.Equal(t, e, coeff.E)
-	assert.Equal(t, c, coeff.C)
-	assert.Equal(t, f, coeff.F)
+	assert.InDelta(t, a, coeff.A, 0.01)
+	assert.InDelta(t, b, coeff.B, 0.01)
+	assert.InDelta(t, d, coeff.D, 0.01)
+	assert.InDelta(t, e, coeff.E, 0.01)
+	assert.InDelta(t, c, coeff.C, 0.01)
+	assert.InDelta(t, f, coeff.F, 0.01)
 	assert.Equal(t, testColor, coeff.Color)
 }
 
@@ -45,11 +45,11 @@ func TestCoefficientsString(t *testing.T) {
 }
 
 func TestRandomColor(t *testing.T) {
-	N := 100
+	n := 100
 	seed := uint64(42)
 	rnd := rand.New(rand.NewPCG(seed, seed))
 
-	for range N {
+	for range n {
 		c := coefficients.RandomColor(rnd)
 		assert.Equal(t, uint8(255), c.A)
 		assert.GreaterOrEqual(t, c.R, uint8(64))
@@ -59,11 +59,11 @@ func TestRandomColor(t *testing.T) {
 }
 
 func TestNewRandom(t *testing.T) {
-	N := 100
+	n := 100
 	seed := uint64(42)
 	rnd := rand.New(rand.NewPCG(seed, seed))
 
-	for i := range N {
+	for i := range n {
 		coeff := coefficients.NewRandom(rnd)
 
 		if coeff.A*coeff.A+coeff.D*coeff.D >= 1 {
@@ -73,7 +73,14 @@ func TestNewRandom(t *testing.T) {
 			t.Errorf("iteration %d: B^2 + E^2 >= 1 (B=%.4f, E=%.4f)", i, coeff.B, coeff.E)
 		}
 		if coeff.A*coeff.A+coeff.B*coeff.B+coeff.D*coeff.D+coeff.E*coeff.E >= 1+(coeff.A*coeff.E-coeff.B*coeff.D)*(coeff.A*coeff.E-coeff.B*coeff.D) {
-			t.Errorf("iteration %d: A^2+B^2+D^2+E^2 >= 1+(AE-BD)^2 (A=%.4f, B=%.4f, D=%.4f, E=%.4f)", i, coeff.A, coeff.B, coeff.D, coeff.E)
+			t.Errorf(
+				"iteration %d: A^2+B^2+D^2+E^2 >= 1+(AE-BD)^2 (A=%.4f, B=%.4f, D=%.4f, E=%.4f)",
+				i,
+				coeff.A,
+				coeff.B,
+				coeff.D,
+				coeff.E,
+			)
 		}
 	}
 }

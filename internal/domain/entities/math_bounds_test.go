@@ -28,6 +28,8 @@ func TestMathBounds_InBoundsX(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := b.InBoundsX(tt.x); got != tt.want {
 				t.Errorf("InBoundsX(%v) = %v, want %v", tt.x, got, tt.want)
 			}
@@ -56,6 +58,8 @@ func TestMathBounds_InBoundsY(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := b.InBoundsY(tt.y); got != tt.want {
 				t.Errorf("InBoundsY(%v) = %v, want %v", tt.y, got, tt.want)
 			}

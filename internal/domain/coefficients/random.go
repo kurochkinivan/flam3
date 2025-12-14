@@ -8,7 +8,7 @@ import (
 
 const (
 	minColor   = 64
-	maxColor   = 256
+	maxColor   = 255
 	colorRange = maxColor - minColor
 
 	coordMin = -2.0
@@ -17,10 +17,10 @@ const (
 
 func RandomColor(rnd *rand.Rand) color.RGBA {
 	return color.RGBA{
-		R: uint8(minColor + rnd.IntN(colorRange)),
-		G: uint8(minColor + rnd.IntN(colorRange)),
-		B: uint8(minColor + rnd.IntN(colorRange)),
-		A: 255,
+		R: uint8(minColor + rnd.IntN(colorRange+1)),
+		G: uint8(minColor + rnd.IntN(colorRange+1)),
+		B: uint8(minColor + rnd.IntN(colorRange+1)),
+		A: math.MaxUint8,
 	}
 }
 
@@ -37,7 +37,7 @@ func generateABDE(rnd *rand.Rand) (a, b, d, e float64) {
 		b, e = generateBE(rnd)
 
 		if conditionABDE(a, b, d, e) {
-			return
+			return a, b, d, e
 		}
 	}
 }
@@ -50,7 +50,7 @@ func generateAD(rnd *rand.Rand) (a, d float64) {
 			d = -d
 		}
 		if conditionAD(a, d) {
-			return
+			return a, d
 		}
 	}
 }
@@ -63,13 +63,13 @@ func generateBE(rnd *rand.Rand) (b, e float64) {
 			e = -e
 		}
 		if conditionBE(b, e) {
-			return
+			return b, e
 		}
 	}
 }
 
 func conditionABDE(a, b, d, e float64) bool {
-	return a*a+b*b+d*d+e*e < 1+math.Pow(a*e-b*d, 2)
+	return a*a+b*b+d*d+e*e < 1+((a*e-b*d)*(a*e-b*d))
 }
 
 func conditionAD(a, d float64) bool {
@@ -80,12 +80,12 @@ func conditionBE(b, e float64) bool {
 	return b*b+e*e < 1
 }
 
-// randFloatN возвращает случайное число в [a,b)
+// randFloatN returns a random float64 in the range [a, b).
 func randFloat(rnd *rand.Rand, a, b float64) float64 {
 	return a + rnd.Float64()*(b-a)
 }
 
-// randBool возвращает true или false с равной вероятностью
+// randBool returns true with probability 1/2.
 func randBool(rnd *rand.Rand) bool {
 	return rnd.IntN(2) == 1
 }

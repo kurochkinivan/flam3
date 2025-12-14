@@ -14,13 +14,13 @@ func NewViewport(resolution Resolution, bounds MathBounds) Viewport {
 	}
 }
 
-// XToPixel converts math X-coordinate to pixel
+// XToPixel converts math X-coordinate to pixel.
 func (v Viewport) XToPixel(x float64) int {
 	pixel := ((v.MathBounds.xMax - x) / v.MathBounds.RangeX()) * float64(v.Resolution.Width())
 	return int(pixel)
 }
 
-// YToPixel converts math Y-coordinate to pixel
+// YToPixel converts math Y-coordinate to pixel.
 func (v Viewport) YToPixel(y float64) int {
 	pixel := ((v.MathBounds.yMax - y) / v.MathBounds.RangeY()) * float64(v.Resolution.Height())
 	return int(pixel)

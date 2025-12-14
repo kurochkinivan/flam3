@@ -41,7 +41,6 @@ func New(
 	variations []entities.WeightedVariation,
 	coefficients []coefficients.Coefficients,
 ) *Fractal {
-
 	return &Fractal{
 		rand:         rand,
 		viewPort:     viewPort,
@@ -57,7 +56,8 @@ func (f *Fractal) Generate(samples, iterations int, symmetry int) *pixels.Pixels
 		newX := f.randomFloat(f.viewPort.XMin(), f.viewPort.XMax())
 		newY := f.randomFloat(f.viewPort.YMin(), f.viewPort.YMax())
 
-		for step := -20; step < iterations; step++ {
+		stepsToSkip := 20
+		for step := -stepsToSkip; step < iterations; step++ {
 			variation := f.randomVariation()
 			coeff := f.randomCoefficients()
 
@@ -66,41 +66,24 @@ func (f *Fractal) Generate(samples, iterations int, symmetry int) *pixels.Pixels
 
 			newX, newY = variation(x, y)
 
-			if step >= 0 {
-				var theta float64
+			if step < 0 {
+				continue
+			}
 
-				for range symmetry {
-					theta += ((2 * math.Pi) / float64(symmetry))
+			var theta float64
+			for range symmetry {
+				theta += ((2 * math.Pi) / float64(symmetry))
 
-					rotX := newX*math.Cos(theta) - newY*math.Sin(theta)
-					rotY := newX*math.Sin(theta) + newY*math.Cos(theta)
+				rotX, rotY := f.rotate(newX, newY, theta)
 
-					if f.viewPort.InBoundsX(rotX) && f.viewPort.InBoundsY(rotY) {
-						x1 := f.viewPort.XToPixel(rotX)
-						y1 := f.viewPort.YToPixel(rotY)
+				if f.viewPort.InBoundsX(rotX) && f.viewPort.InBoundsY(rotY) {
+					x1 := f.viewPort.XToPixel(rotX)
+					y1 := f.viewPort.YToPixel(rotY)
 
-						if f.viewPort.InBoundsPixelX(x1) && f.viewPort.InBoundsPixelY(y1) {
-							point := pixels.Pix(x1, y1)
+					if f.viewPort.InBoundsPixelX(x1) && f.viewPort.InBoundsPixelY(y1) {
+						pix := pixels.Pix(x1, y1)
 
-							if point.Count == 0 {
-								point.Color = color.RGBA{
-									R: coeff.Color.R,
-									G: coeff.Color.G,
-									B: coeff.Color.B,
-									A: 255,
-								}
-							} else {
-								old := point.Color
-								point.Color = color.RGBA{
-									R: uint8((float64(old.R) + float64(coeff.Color.R)) / 2.0),
-									G: uint8((float64(old.G) + float64(coeff.Color.G)) / 2.0),
-									B: uint8((float64(old.B) + float64(coeff.Color.B)) / 2.0),
-									A: 255,
-								}
-							}
-
-							point.Count++
-						}
+						f.blendPixel(pix, coeff.Color)
 					}
 				}
 			}
@@ -108,6 +91,34 @@ func (f *Fractal) Generate(samples, iterations int, symmetry int) *pixels.Pixels
 	}
 
 	return pixels
+}
+
+func (f *Fractal) rotate(x, y, theta float64) (rotX, rotY float64) {
+	rotX = x*math.Cos(theta) - y*math.Sin(theta)
+	rotY = x*math.Sin(theta) + y*math.Cos(theta)
+
+	return rotX, rotY
+}
+
+func (f *Fractal) blendPixel(pix *entities.Pixel, coeffColor color.RGBA) {
+	if pix.Count == 0 {
+		pix.Color = color.RGBA{
+			R: coeffColor.R,
+			G: coeffColor.G,
+			B: coeffColor.B,
+			A: math.MaxUint8,
+		}
+	} else {
+		old := pix.Color
+		pix.Color = color.RGBA{
+			R: uint8((float64(old.R) + float64(coeffColor.R)) / 2.0),
+			G: uint8((float64(old.G) + float64(coeffColor.G)) / 2.0),
+			B: uint8((float64(old.B) + float64(coeffColor.B)) / 2.0),
+			A: math.MaxUint8,
+		}
+	}
+
+	pix.Count++
 }
 
 func (f *Fractal) randomCoefficients() coefficients.Coefficients {

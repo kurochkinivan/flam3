@@ -32,8 +32,8 @@ func mapVariations(cfgVariations []input_config.WeightedFunction) ([]entities.We
 	variations := make([]entities.WeightedVariation, len(cfgVariations))
 
 	for idx, element := range cfgVariations {
-		vName := variation.VariationName(element.Name)
-		namedFunction, err := variation.VariationProvider(vName)
+		vName := variation.Name(element.Name)
+		namedFunction, err := variation.Provider(vName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get function %q: %w", element.Name, err)
 		}

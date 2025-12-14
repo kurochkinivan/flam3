@@ -39,7 +39,10 @@ func (h *Handler) app() *cli.Command {
 			&cli.IntFlag{
 				Name:    "iteration-count",
 				Aliases: []string{"i"},
-				Usage:   fmt.Sprintf("Number of generation iterations (int), default: %d", input_config.DefaultIterations),
+				Usage: fmt.Sprintf(
+					"Number of generation iterations (int), default: %d",
+					input_config.DefaultIterations,
+				),
 			},
 			&cli.StringFlag{
 				Name:    "output-path",
@@ -72,7 +75,10 @@ func (h *Handler) app() *cli.Command {
 			&cli.BoolFlag{
 				Name:    "gamma-correction",
 				Aliases: []string{"g"},
-				Usage:   fmt.Sprintf("Enable gamma correction (bool), default: %t", input_config.DefaultGammaCorrection),
+				Usage: fmt.Sprintf(
+					"Enable gamma correction (bool), default: %t",
+					input_config.DefaultGammaCorrection,
+				),
 			},
 
 			&cli.Float64Flag{
@@ -83,7 +89,10 @@ func (h *Handler) app() *cli.Command {
 			&cli.IntFlag{
 				Name:    "symmetry-level",
 				Aliases: []string{"s"},
-				Usage:   fmt.Sprintf("Number of rotational symmetries N >= 1, default: %d", input_config.DefaultSymmetryLevel),
+				Usage: fmt.Sprintf(
+					"Number of rotational symmetries N >= 1, default: %d",
+					input_config.DefaultSymmetryLevel,
+				),
 			},
 			&cli.StringFlag{
 				Name:  "config",

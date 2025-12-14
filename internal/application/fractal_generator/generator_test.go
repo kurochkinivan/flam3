@@ -16,6 +16,7 @@ import (
 
 type GenerateFractalSuite struct {
 	suite.Suite
+	
 	generator *fractal_generator.FractalGenerator
 }
 
@@ -24,9 +25,9 @@ func TestGenerateFractalSuite(t *testing.T) {
 	suite.Run(t, new(GenerateFractalSuite))
 }
 
-func (s *GenerateFractalSuite) SetupTest() {
+func (suite *GenerateFractalSuite) SetupTest() {
 	log := slog.New(slog.DiscardHandler)
-	s.generator = fractal_generator.New(log)
+	suite.generator = fractal_generator.New(log)
 }
 
 func (suite *GenerateFractalSuite) TestGenerateFractal_OneThread() {
@@ -60,7 +61,7 @@ func fractalConfig(samples, iterations, threads int) (*fractal_config.Config, er
 	bounds := entities.DefaultMathBounds()
 
 	fName := variation.Cosine
-	f, err := variation.VariationProvider(fName)
+	f, err := variation.Provider(fName)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func benchFractalConfigCustomSize(samples, iterations, threads, width, height in
 
 	// Используем несколько вариаций для более реалистичного теста
 	variations := []entities.WeightedVariation{}
-	variationNames := []variation.VariationName{
+	variationNames := []variation.Name{
 		variation.Sinusoidal,
 		variation.Spherical,
 		variation.Swirl,
@@ -137,7 +138,7 @@ func benchFractalConfigCustomSize(samples, iterations, threads, width, height in
 	}
 
 	for _, vName := range variationNames {
-		f, err := variation.VariationProvider(vName)
+		f, err := variation.Provider(vName)
 		if err != nil {
 			return nil, err
 		}
