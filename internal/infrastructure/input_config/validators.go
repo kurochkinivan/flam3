@@ -40,7 +40,7 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("invalid symmetry_level: %w", err)
 	}
 
-	if err := ValidatePath(c.Output); err != nil {
+	if err := ValidateWritableDir(c.Output); err != nil {
 		return fmt.Errorf("invalid path: %w", err)
 	}
 
@@ -67,11 +67,25 @@ func ValidateGreaterThanZero[Number int | float64](v Number) error {
 	return nil
 }
 
-func ValidatePath(path string) error {
+func ValidateWritableDir(path string) error {
 	dir := filepath.Dir(path)
 	if _, err := os.Stat(dir); err != nil {
 		return fmt.Errorf("dir %q does not exist: %w", dir, err)
 	}
+
+	f, err := os.CreateTemp(dir, "*.tmp")
+	if err != nil {
+		return fmt.Errorf("unable to create temporary file in provided directory: %w", err)
+	}
+
+	if err := f.Close(); err != nil {
+		return fmt.Errorf("unable to close temporary file: %w", err)
+	}
+
+	if err := os.Remove(f.Name()); err != nil {
+		return fmt.Errorf("unable to remove temporary file: %w", err)
+	}
+
 	return nil
 }
 

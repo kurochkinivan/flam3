@@ -13,13 +13,13 @@ func TestHandler_parseFunctionsSlice(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		input    string
+		input    []string
 		expected []input_config.WeightedFunction
 		hasError bool
 	}{
 		{
 			name:  "happy path",
-			input: "linear:1.0,spherical:0.5",
+			input: []string{"linear:1.0", "spherical:0.5"},
 			expected: []input_config.WeightedFunction{
 				input_config.NewWeightedFunction("linear", 1.0),
 				input_config.NewWeightedFunction("spherical", 0.5),
@@ -28,19 +28,19 @@ func TestHandler_parseFunctionsSlice(t *testing.T) {
 		},
 		{
 			name:     "empty input",
-			input:    "",
+			input:    []string{""},
 			expected: nil,
 			hasError: true,
 		},
 		{
 			name:     "invalid format",
-			input:    "linear",
+			input:    []string{"linear"},
 			expected: nil,
 			hasError: true,
 		},
 		{
 			name:     "invalid weight",
-			input:    "linear:abc",
+			input:    []string{"linear:abc"},
 			expected: nil,
 			hasError: true,
 		},

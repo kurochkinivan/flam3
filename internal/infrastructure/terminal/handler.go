@@ -61,7 +61,7 @@ func (h *Handler) loadInputConfig(cmd *cli.Command) (*input_config.Config, error
 		output := cmd.String("output-path")
 		threads := cmd.Int("threads")
 		affineParams := cmd.String("affine-params")
-		functions := cmd.String("functions")
+		functions := cmd.StringSlice("functions")
 		gammaCorrection := cmd.Bool("gamma-correction")
 		gamma := cmd.Float64("gamma")
 		symmetry := cmd.Int("symmetry-level")

@@ -364,7 +364,7 @@ func TestValidatePath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := input_config.ValidatePath(tt.path)
+			err := input_config.ValidateWritableDir(tt.path)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {

@@ -13,15 +13,14 @@ const (
 	numberOfAffineParams = 6
 )
 
-func (h *Handler) parseFunctionsSlice(input string) ([]input_config.WeightedFunction, error) {
-	if strings.TrimSpace(input) == "" {
+func (h *Handler) parseFunctionsSlice(input []string) ([]input_config.WeightedFunction, error) {
+	if len(input) == 0 {
 		return nil, errors.New("functions were not provided")
 	}
 
-	blocks := strings.Split(input, ",")
-	result := make([]input_config.WeightedFunction, 0, len(blocks))
+	result := make([]input_config.WeightedFunction, 0, len(input))
 
-	for i, block := range blocks {
+	for i, block := range input {
 		fn, err := parseFunction(block)
 		if err != nil {
 			return nil, fmt.Errorf("block %d: %w", i, err)
