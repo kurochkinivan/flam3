@@ -11,7 +11,7 @@ type Coefficients struct {
 	Color      color.RGBA
 }
 
-func New(a, b, d, e float64, c, f float64, color color.RGBA) Coefficients {
+func New(a, b, c, d, e, f float64, color color.RGBA) Coefficients {
 	return Coefficients{
 		A:     a,
 		B:     b,

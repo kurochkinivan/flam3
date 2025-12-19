@@ -28,7 +28,7 @@ func NewRandom(rnd *rand.Rand) Coefficients {
 	a, b, d, e := generateABDE(rnd)
 	c, f := randFloat(rnd, coordMin, coordMax), randFloat(rnd, coordMin, coordMax)
 
-	return New(a, b, d, e, c, f, RandomColor(rnd))
+	return New(a, b, c, d, e, f, RandomColor(rnd))
 }
 
 func generateABDE(rnd *rand.Rand) (a, b, d, e float64) {

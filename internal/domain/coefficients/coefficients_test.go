@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 	c, f := 5.0, 6.0
 	testColor := color.RGBA{R: 100, G: 150, B: 200, A: 255}
 
-	coeff := coefficients.New(a, b, d, e, c, f, testColor)
+	coeff := coefficients.New(a, b, c, d, e, f, testColor)
 
 	assert.InDelta(t, a, coeff.A, 0.01)
 	assert.InDelta(t, b, coeff.B, 0.01)
@@ -32,7 +32,7 @@ func TestCoefficientsString(t *testing.T) {
 	c, f := 3.2, -0.5
 	testColor := color.RGBA{R: 255, G: 128, B: 64, A: 255}
 
-	coeff := coefficients.New(a, b, d, e, c, f, testColor)
+	coeff := coefficients.New(a, b, c, d, e, f, testColor)
 
 	str := coeff.String()
 	expected := fmt.Sprintf(
