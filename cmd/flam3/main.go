@@ -16,9 +16,10 @@ var version = "dev"
 func main() {
 	ctx := context.Background()
 	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	slog.SetDefault(log)
 
 	imageSaver := image_saver.NewPNGSaver()
-	fractalGenerator := fractal_generator.New(log)
+	fractalGenerator := fractal_generator.New()
 
 	handler := terminal.New(version, fractalGenerator, imageSaver)
 

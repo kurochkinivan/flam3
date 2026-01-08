@@ -58,8 +58,9 @@ func main() {
 	defer f.Close()
 
 	log := slog.New(slog.NewTextHandler(f, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	slog.SetDefault(log)
 
-	fractalGenerator := fractal_generator.New(log)
+	fractalGenerator := fractal_generator.New()
 	imageSaver := image_saver.NewPNGSaver()
 
 	ctx := context.Background()

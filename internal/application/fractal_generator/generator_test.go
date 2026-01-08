@@ -2,7 +2,6 @@ package fractal_generator_test
 
 import (
 	"context"
-	"io"
 	"log/slog"
 	"math/rand/v2"
 	"testing"
@@ -29,9 +28,10 @@ func TestGenerateFractalSuite(t *testing.T) {
 
 func (suite *GenerateFractalSuite) SetupTest() {
 	log := slog.New(slog.DiscardHandler)
+	slog.SetDefault(log)
 
 	suite.ctx = context.Background()
-	suite.generator = fractal_generator.New(log)
+	suite.generator = fractal_generator.New()
 }
 
 func (suite *GenerateFractalSuite) TestGenerateFractal_OneThread() {
@@ -106,8 +106,8 @@ func BenchmarkGenerateFractal_8Threads(b *testing.B) {
 }
 
 func benchmarkGenerateFractal(b *testing.B, threads int) {
-	log := slog.New(slog.NewTextHandler(io.Discard, nil))
-	generator := fractal_generator.New(log)
+	slog.SetDefault(slog.New(slog.DiscardHandler))
+	generator := fractal_generator.New()
 
 	cfg, err := benchFractalConfig(benchSamples, benchIterations, threads)
 	if err != nil {

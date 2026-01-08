@@ -11,14 +11,10 @@ import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/pixels"
 )
 
-type FractalGenerator struct {
-	log *slog.Logger
-}
+type FractalGenerator struct{}
 
-func New(log *slog.Logger) *FractalGenerator {
-	return &FractalGenerator{
-		log: log,
-	}
+func New() *FractalGenerator {
+	return &FractalGenerator{}
 }
 
 // GenerateFractal generates a fractal image based on the provided configuration.
@@ -28,7 +24,7 @@ func New(log *slog.Logger) *FractalGenerator {
 func (f *FractalGenerator) GenerateFractal(ctx context.Context, cfg *fractal_config.Config) *pixels.Pixels {
 	// 1. Generate fractal
 	start := time.Now()
-	f.log.InfoContext(ctx, "generating fractal",
+	slog.InfoContext(ctx, "generating fractal",
 		slog.Int("samples", cfg.Samples),
 		slog.Int("iterations", cfg.Iterations),
 		slog.Int("threads", cfg.Threads),
@@ -39,18 +35,18 @@ func (f *FractalGenerator) GenerateFractal(ctx context.Context, cfg *fractal_con
 
 	pixels := f.generateFractal(cfg)
 
-	f.log.InfoContext(ctx, "completed fractal generation", slog.Duration("duration", time.Since(start)))
+	slog.InfoContext(ctx, "completed fractal generation", slog.Duration("duration", time.Since(start)))
 
 	// 2. Apply gamma factor if necessary
 	if cfg.GammaCorrection {
 		start = time.Now()
-		f.log.InfoContext(ctx, "applying gamma factor", slog.Float64("gamma", cfg.Gamma))
+		slog.InfoContext(ctx, "applying gamma factor", slog.Float64("gamma", cfg.Gamma))
 
 		pixels.ApplyGammaFactor(cfg.Gamma)
 
-		f.log.InfoContext(ctx, "gamma factor was applied", slog.Duration("duration", time.Since(start)))
+		slog.InfoContext(ctx, "gamma factor was applied", slog.Duration("duration", time.Since(start)))
 	} else {
-		f.log.InfoContext(ctx, "gamma correction not enabled", slog.Bool("enabled", cfg.GammaCorrection))
+		slog.InfoContext(ctx, "gamma correction not enabled", slog.Bool("enabled", cfg.GammaCorrection))
 	}
 
 	return pixels
@@ -66,7 +62,7 @@ func (f *FractalGenerator) generateFractal(cfg *fractal_config.Config) *pixels.P
 	remainder := cfg.Samples % cfg.Threads
 	firstWorkerSamples := samplesPerWorker + remainder
 
-	f.log.Info("starting workers",
+	slog.Info("starting workers",
 		slog.Int("workers", cfg.Threads),
 		slog.Int("samples_per_worker", samplesPerWorker),
 		slog.Int("first_worker_samples", firstWorkerSamples),
@@ -79,14 +75,14 @@ func (f *FractalGenerator) generateFractal(cfg *fractal_config.Config) *pixels.P
 		}
 
 		wg.Go(func() {
-			f.log.Debug("worker started",
+			slog.Debug("worker started",
 				slog.Int("worker_id", workerID),
 				slog.Int("samples", samplesForWorker),
 			)
 
 			pixels := fractal.Generate(samplesForWorker, cfg.Iterations, cfg.SymmetryLevel)
 
-			f.log.Debug("worker completed",
+			slog.Debug("worker completed",
 				slog.Int("worker_id", workerID),
 			)
 
@@ -95,13 +91,13 @@ func (f *FractalGenerator) generateFractal(cfg *fractal_config.Config) *pixels.P
 	}
 
 	go func() {
-		f.log.Debug("waiting for all workers to complete")
+		slog.Debug("waiting for all workers to complete")
 		wg.Wait()
-		f.log.Debug("all workers completed, closing channel")
+		slog.Debug("all workers completed, closing channel")
 		close(pixelsChan)
 	}()
 
-	f.log.Debug("merging pixels from workers")
+	slog.Debug("merging pixels from workers")
 
 	var mergedPixels *pixels.Pixels
 	for pixels := range pixelsChan {
@@ -113,7 +109,7 @@ func (f *FractalGenerator) generateFractal(cfg *fractal_config.Config) *pixels.P
 		mergedPixels.Merge(pixels)
 	}
 
-	f.log.Debug("all pixels were merged")
+	slog.Debug("all pixels were merged")
 
 	return mergedPixels
 }
