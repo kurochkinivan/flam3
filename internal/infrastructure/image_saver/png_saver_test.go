@@ -1,4 +1,4 @@
-package image_utils_test
+package image_saver_test
 
 import (
 	"image"
@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/image_utils"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/image_saver"
 )
 
 func TestSaveImageHappyPath(t *testing.T) {
-	saver := image_utils.NewImageSaver()
+	saver := image_saver.NewPNGSaver()
 
 	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
 	path := filepath.Join(t.TempDir(), "out.png")

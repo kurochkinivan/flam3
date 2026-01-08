@@ -1,4 +1,4 @@
-package image_utils
+package image_saver
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 type PNGSaver struct{}
 
-func NewImageSaver() *PNGSaver {
+func NewPNGSaver() *PNGSaver {
 	return &PNGSaver{}
 }
 
