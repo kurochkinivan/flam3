@@ -4,6 +4,9 @@ COVERAGE_FILE_HTML ?= coverage.html
 TARGET ?= flam3
 VERSION ?= v1.0.0
 
+S1 ?= 2408048046953245368
+S2 ?= 14740139351423643016
+
 ## build binary file
 .PHONY: build
 build:
@@ -41,3 +44,11 @@ flam3-cli:
   		-t 8 \
   		-f swirl:10.0,horseshoe:0.7 \
   		-ap 1.0,1.0,1.0,1.0,1.0,1.0/0.3,1.0,-0.2,0.4,1.0,1.0
+
+.PHONY: flam3-random
+flam3-random:
+	@go run cmd/flam3-rand/main.go --number=200 --output-dir=output
+
+.PHONY: flam3-random-reproduce
+flam3-random-reproduce:
+	@go run ./cmd/flam3-rand/main.go --seed1=${S1} --seed2=${S2} --number=1 --output-dir=output/reproduce
