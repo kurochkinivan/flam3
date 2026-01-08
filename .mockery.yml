@@ -6,17 +6,14 @@ formatter: goimports
 include-auto-generated: false
 log-level: info
 structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: '{{.SrcPackageName}}_test'
+pkgname: '{{.SrcPackageName}}'
 recursive: false
 require-template-schema-exists: true
 template: testify
 template-schema: '{{.Template}}.schema.json'
 packages:
-  gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/fractal_usecase:
-    interfaces:
-      Generator:
-      ImageSaver:
   gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/terminal:
     interfaces: 
-      FractalUsecase:
+      FractalGenerator:
+      ImageSaver:
       

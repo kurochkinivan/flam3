@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
 )
@@ -15,8 +14,7 @@ import (
 func TestHandler_FractalFlameCommand(t *testing.T) {
 	t.Parallel()
 
-	mockUsecase := NewMockFractalUsecase(t)
-	h := New("1.0.0", mockUsecase)
+	handler := MockedHandler(t)
 
 	// Create a temporary config file for testing
 	tempDir := t.TempDir()
@@ -42,9 +40,7 @@ func TestHandler_FractalFlameCommand(t *testing.T) {
 	}
 	cmd.Set("config", configPath)
 
-	mockUsecase.EXPECT().Execute(context.Background(), mock.Anything).Return(nil).Once()
-
-	err = h.FractalFlameCommand(context.Background(), cmd)
+	err = handler.FractalFlameCommand(context.Background(), cmd)
 	assert.NoError(t, err)
 }
 

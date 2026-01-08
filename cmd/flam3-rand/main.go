@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/fractal_generator"
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/fractal_usecase"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/coefficients"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/entities"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/fractal_config"
@@ -60,9 +59,8 @@ func main() {
 
 	log := slog.New(slog.NewTextHandler(f, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
-	generator := fractal_generator.New(log)
+	fractalGenerator := fractal_generator.New(log)
 	imageSaver := image_utils.NewImageSaver()
-	usecase := fractal_usecase.New(log, generator, imageSaver)
 
 	ctx := context.Background()
 	for idx := range numberOfImages {
@@ -100,7 +98,9 @@ func main() {
 			slog.Int("threads", cfg.Threads),
 		)
 
-		err := usecase.Execute(ctx, cfg)
+		pixels := fractalGenerator.GenerateFractal(ctx, cfg)
+
+		err := imageSaver.SaveImage(pixels.Image(), cfg.OutputPath)
 		if err != nil {
 			log.ErrorContext(ctx, "failed to execute fractal generation",
 				slog.Int("image_index", idx),

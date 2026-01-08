@@ -3,9 +3,11 @@ package terminal
 import (
 	"context"
 	"fmt"
+	"image"
 
 	"github.com/urfave/cli/v3"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/fractal_config"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/pixels"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/input_config"
 )
 
@@ -15,18 +17,24 @@ const (
 )
 
 type Handler struct {
-	version        string
-	fractalUsecase FractalUsecase
+	version          string
+	fractalGenerator FractalGenerator
+	imageSaver       ImageSaver
 }
 
-type FractalUsecase interface {
-	Execute(ctx context.Context, cfg *fractal_config.Config) error
+type FractalGenerator interface {
+	GenerateFractal(ctx context.Context, cfg *fractal_config.Config) *pixels.Pixels
 }
 
-func New(version string, fractalUsecase FractalUsecase) *Handler {
+type ImageSaver interface {
+	SaveImage(img image.Image, path string) error
+}
+
+func New(version string, fractalGenerator FractalGenerator, imageSaver ImageSaver) *Handler {
 	return &Handler{
-		version:        version,
-		fractalUsecase: fractalUsecase,
+		version:          version,
+		fractalGenerator: fractalGenerator,
+		imageSaver:       imageSaver,
 	}
 }
 
@@ -41,7 +49,9 @@ func (h *Handler) FractalFlameCommand(ctx context.Context, cmd *cli.Command) err
 		return cli.Exit(err, ExitCodeInvalidInput)
 	}
 
-	if err := h.fractalUsecase.Execute(ctx, fractalCfg); err != nil {
+	pixels := h.fractalGenerator.GenerateFractal(ctx, fractalCfg)
+
+	if err := h.imageSaver.SaveImage(pixels.Image(), inputCfg.Output); err != nil {
 		return cli.Exit(err, ExitCodeUnexpectedError)
 	}
 

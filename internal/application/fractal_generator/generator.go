@@ -1,8 +1,10 @@
 package fractal_generator
 
 import (
+	"context"
 	"log/slog"
 	"sync"
+	"time"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/fractal"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/fractal_config"
@@ -23,7 +25,38 @@ func New(log *slog.Logger) *FractalGenerator {
 // It uses multiple workers to generate the image in parallel, and then merges the results.
 // The number of workers, samples per worker, and symmetry level are all configurable.
 // The function returns a pointer to the generated image.
-func (f *FractalGenerator) GenerateFractal(cfg *fractal_config.Config) *pixels.Pixels {
+func (f *FractalGenerator) GenerateFractal(ctx context.Context, cfg *fractal_config.Config) *pixels.Pixels {
+	// 1. Generate fractal
+	start := time.Now()
+	f.log.InfoContext(ctx, "generating fractal",
+		slog.Int("samples", cfg.Samples),
+		slog.Int("iterations", cfg.Iterations),
+		slog.Int("threads", cfg.Threads),
+		slog.Int("symmetry_level", cfg.SymmetryLevel),
+		slog.String("coefficients", cfg.Coeffs.String()),
+		slog.String("variations", cfg.Variations.String()),
+	)
+
+	pixels := f.generateFractal(cfg)
+
+	f.log.InfoContext(ctx, "completed fractal generation", slog.Duration("duration", time.Since(start)))
+
+	// 2. Apply gamma factor if necessary
+	if cfg.GammaCorrection {
+		start = time.Now()
+		f.log.InfoContext(ctx, "applying gamma factor", slog.Float64("gamma", cfg.Gamma))
+
+		pixels.ApplyGammaFactor(cfg.Gamma)
+
+		f.log.InfoContext(ctx, "gamma factor was applied", slog.Duration("duration", time.Since(start)))
+	} else {
+		f.log.InfoContext(ctx, "gamma correction not enabled", slog.Bool("enabled", cfg.GammaCorrection))
+	}
+
+	return pixels
+}
+
+func (f *FractalGenerator) generateFractal(cfg *fractal_config.Config) *pixels.Pixels {
 	fractal := fractal.New(cfg.Rand, cfg.Viewport, cfg.Variations, cfg.Coeffs)
 
 	pixelsChan := make(chan *pixels.Pixels, cfg.Threads)
@@ -39,10 +72,9 @@ func (f *FractalGenerator) GenerateFractal(cfg *fractal_config.Config) *pixels.P
 		slog.Int("first_worker_samples", firstWorkerSamples),
 	)
 
-	for i := range cfg.Threads {
-		workerID := i
+	for workerID := range cfg.Threads {
 		samplesForWorker := samplesPerWorker
-		if i == 0 {
+		if workerID == 0 {
 			samplesForWorker = firstWorkerSamples
 		}
 

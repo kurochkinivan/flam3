@@ -1,4 +1,4 @@
-package terminal_test
+package terminal
 
 import (
 	"os"
@@ -8,14 +8,11 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/terminal"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain/pixels"
 )
 
 func TestRun_HappyPath_Flags(t *testing.T) {
-	useCase := terminal.NewMockFractalUsecase(t)
-	useCase.EXPECT().Execute(mock.Anything, mock.Anything).Return(nil).Once()
-
-	handler := terminal.New("version", useCase)
+	handler := MockedHandler(t)
 
 	osArgs := []string{
 		"flam3",
@@ -34,15 +31,14 @@ func TestRun_HappyPath_Flags(t *testing.T) {
 }
 
 func TestRun_NoParams_Flags(t *testing.T) {
-	useCase := terminal.NewMockFractalUsecase(t)
-	handler := terminal.New("version", useCase)
+	handler := New("test_version", nil, nil)
 
 	osArgs := []string{
 		"flam3",
 	}
 
 	cli.OsExiter = func(code int) {
-		assert.Equal(t, terminal.ExitCodeInvalidInput, code)
+		assert.Equal(t, ExitCodeInvalidInput, code)
 	}
 
 	err := handler.Run(t.Context(), osArgs)
@@ -50,8 +46,7 @@ func TestRun_NoParams_Flags(t *testing.T) {
 }
 
 func TestRun_HappyPath_JSONConfig(t *testing.T) {
-	useCase := terminal.NewMockFractalUsecase(t)
-	useCase.EXPECT().Execute(mock.Anything, mock.Anything).Return(nil).Once()
+	handler := MockedHandler(t)
 
 	json := []byte(`{
   "size": {
@@ -105,15 +100,12 @@ func TestRun_HappyPath_JSONConfig(t *testing.T) {
 		"--config=" + f.Name(),
 	}
 
-	handler := terminal.New("version", useCase)
 	err = handler.Run(t.Context(), osArgs)
 
 	require.NoError(t, err)
 }
 
 func TestRun_NoParams_JSON(t *testing.T) {
-	useCase := terminal.NewMockFractalUsecase(t)
-
 	f, err := os.CreateTemp(t.TempDir(), "*.json")
 	require.NoError(t, err)
 	require.NoError(t, f.Close())
@@ -124,10 +116,21 @@ func TestRun_NoParams_JSON(t *testing.T) {
 	}
 
 	cli.OsExiter = func(code int) {
-		assert.Equal(t, terminal.ExitCodeInvalidInput, code)
+		assert.Equal(t, ExitCodeInvalidInput, code)
 	}
 
-	handler := terminal.New("version", useCase)
+	handler := New("version", nil, nil)
 	err = handler.Run(t.Context(), osArgs)
 	require.Error(t, err)
+}
+
+func MockedHandler(t *testing.T) *Handler {
+	mockFractalGenerator := NewMockFractalGenerator(t)
+	mockImageSaver := NewMockImageSaver(t)
+	pixels := &pixels.Pixels{}
+
+	mockFractalGenerator.EXPECT().GenerateFractal(mock.Anything, mock.Anything).Return(pixels).Once()
+	mockImageSaver.EXPECT().SaveImage(pixels.Image(), mock.Anything).Return(nil).Once()
+
+	return New("test_version", mockFractalGenerator, mockImageSaver)
 }

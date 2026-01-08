@@ -1,6 +1,7 @@
 package fractal_generator_test
 
 import (
+	"context"
 	"io"
 	"log/slog"
 	"math/rand/v2"
@@ -16,7 +17,8 @@ import (
 
 type GenerateFractalSuite struct {
 	suite.Suite
-	
+
+	ctx       context.Context
 	generator *fractal_generator.FractalGenerator
 }
 
@@ -27,6 +29,8 @@ func TestGenerateFractalSuite(t *testing.T) {
 
 func (suite *GenerateFractalSuite) SetupTest() {
 	log := slog.New(slog.DiscardHandler)
+
+	suite.ctx = context.Background()
 	suite.generator = fractal_generator.New(log)
 }
 
@@ -34,7 +38,7 @@ func (suite *GenerateFractalSuite) TestGenerateFractal_OneThread() {
 	cfg, err := fractalConfig(10, 10, 1)
 	suite.Require().NoError(err)
 
-	pixels := suite.generator.GenerateFractal(cfg)
+	pixels := suite.generator.GenerateFractal(suite.ctx, cfg)
 	suite.Require().NotNil(pixels)
 }
 
@@ -42,7 +46,7 @@ func (suite *GenerateFractalSuite) TestGenerateFractal_MultipleThreads() {
 	cfg, err := fractalConfig(10, 10, 4)
 	suite.Require().NoError(err)
 
-	pixels := suite.generator.GenerateFractal(cfg)
+	pixels := suite.generator.GenerateFractal(suite.ctx, cfg)
 	suite.Require().NotNil(pixels)
 }
 
@@ -50,7 +54,7 @@ func (suite *GenerateFractalSuite) TestGenerateFractal_MultipleThreads_RaceTest(
 	cfg, err := fractalConfig(1000, 1000, 8)
 	suite.Require().NoError(err)
 
-	pixels := suite.generator.GenerateFractal(cfg)
+	pixels := suite.generator.GenerateFractal(suite.ctx, cfg)
 	suite.Require().NotNil(pixels)
 }
 
@@ -111,7 +115,7 @@ func benchmarkGenerateFractal(b *testing.B, threads int) {
 	}
 
 	for b.Loop() {
-		pixels := generator.GenerateFractal(cfg)
+		pixels := generator.GenerateFractal(context.TODO(), cfg)
 		if pixels == nil {
 			b.Fatal("generated pixels are nil")
 		}
